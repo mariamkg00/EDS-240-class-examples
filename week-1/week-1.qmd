@@ -1,0 +1,28 @@
+## Advantages of ggplot
+
+-   consistent underlying `grammar of graphics`
+
+-   super flexible, layered plot specification
+
+-   theme system for polishing plot appearance
+
+-   lots of additional functionality thanks to extensions
+
+-   active and helpful community
+
+graphic layers
+
+1.  data (in tidy format) and defining aesthetics
+2.  geometric objects (aka geoms) - define the type of plots
+3.  statistical transforations
+4.  position adjustments
+5.  coordinate systems
+6.  facet
+
+Enhance communication using additional layers
+
+1.  labels - add/update titles, axis/legend labels
+2.  annotations - add textual lables
+3.  scales - update how the aesthetic mappings manifest visually
+4.  themes - customize the non-data elements of your plot
+5.  layout - combine multiple plots into the same graphic
