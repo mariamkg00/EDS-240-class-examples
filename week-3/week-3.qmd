@@ -1,3 +1,5 @@
+## Choosing a graphic form, Fundamental chart types (Part I)
+
 ```{r message = FALSE}
 library("chron") # for working with dates / times
 library("naniar") # tools for exploring & handing missing data
@@ -8,4 +10,295 @@ library("gghighlight") # {ggplot2} extension for highlighting geoms
 library("ggbeeswarm") # {ggplot2} extension for creating categorical scatter (violin point) plots
 library("see") # {ggplot2} extension for model visualization (we'll be using it for it's geom, geom_violindot())
 library("scales") # provides the internal scaling infrastructure used by ggplot2, and gives you tools to override the default breaks, labels, transformations and palettes (installed automatically with {ggplot2} or {tidyverse})
+```
+
+### Lecture 3.1 Choosing the right graphic form
+
+We understand complex numbers better when they're represented visually
+
+Mapping - how values of a variable of interest are represented by visuals (height of a bar, shaded region of a plot, color of data points)
+
+Q: How do you choose the right graphic form to represent your data?
+
+Different methods
+
+-   length or height
+
+-   poisiton area
+
+-   angle/area
+
+-   hue and shade
+
+Hierarchy of elementary perceptual tasks
+
+-   a viewer performs one or more of these mental-visual tasks to extract the values of real variables represented on most graphs
+
+-   successful cahrts are constructed based on elementary tasks 'as high in the hierarchy as possible'
+
+-   the closer you move to the top of the scale the faster and
+
+Caveats to the hierarchy an example
+
+lower scale methods can be appropriate when the goal is to reveal general patterns. For example, a chloropleth map displays divided geographic areas/regions, which are colored in relation to a numeric numbers
+
+No method of choosing a graphic form is perfect! It's important to think critically about your graphic's purpose and how best to represent your data to serve that purpose
+
+Tips for choosing the right graphic form
+
+-   think about the tasks you want to enable or message you want to convey; do you want to compare, see change or flow, reveal relationships or connections
+
+-   consider the number of variables and the number of data points, as well as the data types you're working with
+
+number of variables and data points, data types
+
+-   continuous: measured data can have an infinite number of values within possible range
+
+    temperature
+
+-   discrete: observations can only exist at limited values, often counts
+
+    -   \# of species counted in a region
+
+nominal - unordered descriptions
+
+ordinal - ordered descriptions
+
+binary - only 2 mutually exclusive outcomes
+
+-   try different graphic forms, especially if you have more than one task to enable or message to convey
+
+If we wanted to show big picture patterns and detailed comparisons, we may consider including multiple graphs
+
+-   arrange the components of the graphic to make it as easy as possible to extract meaning fro your graphic quickly
+
+-   test the outcomes of your graphic on others, particularly on those who are representative of the audience you are trying to reach
+
+Critiquing a data viz:
+
+-   identify primary and secondary insights the graphic is trying to convey
+
+-   identify elementary perceptual tasks and what is confusing or difficult to do
+
+-   identify what's possible to use more effective elementary preceptual tasks for the primary and secondary insights
+
+-   identify points of confusion
+
+### Lecture 3.2 Visualizing Data Distributions
+
+Exploring bottom temperatures recorded at Mohawk Reef, a near-shore rocky reef and one of the Santa Barbara Coastal LTER research sites
+
+```{r message = false}
+# load packages
+library(tidyverse)
+library(chron)
+library(naniar)
+
+# import data ---
+mko <- read_csv('https://portal.edirepository.org/nis/dataviewer?packageid=knb-lter-sbc.2007.17&entityid=02629ecc08a536972dec021f662428aa')
+```
+
+#### Data Wrangling
+
+```{r, warning=FALSE}
+mko_clean <- mko %>% 
+  select(year, month, day, decimal_time, Temp_bot) %>% 
+  unite(date, year, month, day, sep = '-',remove = FALSE) %>% 
+  mutate(time = times(decimal_time)) %>% 
+  unite(date_time, date, time, sep = ' ') %>% 
+  # treat it as a date time object; overwrite date time column
+  mutate(date_time = as.POSIXct(date_time, "%Y-%m-%d %H:%M:%S", tx = 'GMZ'),
+         year = as.factor(year), #treating ymd as a categorical variable
+         month = as.factor(month),
+         day = as.numeric(day)) %>% 
+  mutate(month_name = as.factor(month.name[month])) %>% 
+  replace_with_na(replace = list(Temp_bot = 9999))
+  
+  
+
+```
+
+##### Histograns - `ggplot::geom_histogram()`
+
+-   important considerations : bin width (30 bins by default); too few/too many bins
+
+```{r}
+# === original plot ===
+# position geom_histogram uses is stacked 
+mko_clean %>% 
+  mutate(month_name = factor(month_name, levels = month.name)) %>% 
+  ggplot(aes(x = Temp_bot, fill = month_name))+
+  geom_histogram(position = 'identity', alpha = 0.5)
+
+
+# small multiples --
+mko_clean %>% 
+  mutate(month_name = factor(month_name, levels = month.name)) %>% 
+  ggplot(aes(x = Temp_bot))+
+  geom_histogram(position = 'identity', alpha = 0.5)+
+  facet_wrap(~month_name)
+
+# fewer groups at a time --- 
+mko_clean %>% 
+  mutate(month_name = factor(month_name, levels = month.name)) %>% 
+  filter(month_name %in% c('April','June','October')) %>% 
+  ggplot(aes(x = Temp_bot, fill = month_name))+
+  geom_histogram(position = 'identity', alpha = 0.5, bins = 1) + 
+  scale_fill_manual(values = c("#2C5374","#ADD8E6","#8B3A3A"))
+```
+
+#### Density plots - `ggplot2::geom_density()`
+
+A smoothed version of a histogram. Density plots are representations of the distribution of numeric variables; uses a KDE to show the probability density function of a variable. The area under each curve is equal to 1. Use a density plot when you are most concerned with the shape of the distribution.
+
+```{r}
+mko_clean %>% 
+  mutate(month_name = factor(month_name, levels = month.name)) %>% 
+  ggplot(aes(x = Temp_bot, fill = month_name))+
+  geom_density( alpha = 0.5)
+
+
+# fewer groups at a time --- 
+mko_clean %>% 
+  mutate(month_name = factor(month_name, levels = month.name)) %>% 
+  filter(month_name %in% c('April','June','October')) %>% 
+  ggplot(aes(x = Temp_bot, fill = month_name))+
+  geom_density(alpha = 0.5, adjust = 1/2) + 
+  scale_fill_manual(values = c("#2C5374","#ADD8E6","#8B3A3A"))
+```
+
+Histograms show us the counts of values in each range, represented by the height of the bars
+
+density plots show the proportion of values in each area (area under curve equal 1; peaks indicate where more values are concentrated, but it does not tell us anything about the number of observations)
+
+##### Hist vs density
+
+```{r}
+dummy_data <- data.frame(value = c(rnorm(n = 100, mean = 5),
+                                   rnorm(n = 200, mean = 10)),
+                         group = rep(c("A", "B"),
+                                     times = c(100, 200)))
+
+# histogram --
+ggplot(dummy_data, aes(x = value, fill = group))+
+  geom_histogram(position = 'identity', alpha = 0.7)+
+  geom_rug(aes(color = group), alpha = 0.7)
+
+# density --
+ggplot(dummy_data, aes(x = value, fill = group))+
+  geom_density(alpha = 0.7)+
+  geom_rug(aes(color = group), alpha = 0.7)
+```
+
+#### Ridgeline Plots - `ggridges`
+
+they show the distribution of a numeric variable for multiple groups
+
+need : a numeric variable with lots of values
+
+important considerations - work best when you have more than 6 groups
+
+```{r}
+ggplot(mko_clean, aes(x = Temp_bot, y = month_name, 
+                      fill = after_stat(x)))+
+  ggridges::geom_density_ridges_gradient(rel_min_height = 0.01, scale = 3)+
+  scale_y_discrete(limits = rev(month.name))+
+  scale_fill_gradientn(colors = c("#2C5374","#849BB4", "#D9E7EC", "#EF8080", "#8B3A3A"))
+```
+
+adjustments: jitter raw data; visualize the raw data underlying the density ridges ( since our temperature data is too large)
+
+#### Box plots - `ggplot2::geom_boxplot()`
+
+what are they?
+
+-   box plots summarize the distribution of a numeric variable for one or several groups
+
+need: a numeric variable, often with multiple groups
+
+```{r}
+ggplot(mko_clean, aes(x = month_name, y = Temp_bot, fill = month_name))+
+  geom_boxplot()+
+  scale_x_discrete(limits = rev(month.name)) + 
+  coord_flip()+
+  gghighlight::gghighlight(month_name == 'October')+
+  theme(
+    legend.position = 'none'
+  )
+
+# jitter and dodge 
+library(palmerpenguins)
+
+penguins %>% 
+  mutate(year = as.factor(year)) %>% 
+  ggplot(aes(x = species, y = body_mass_g, color = year))+
+  geom_boxplot()+
+  geom_point(alpha = 0.5, position = position_jitterdodge(jitter.width = 0.2))+
+  coord_flip()
+```
+
+#### Violin plots - `ggplot2::geom_violin()`
+
+-   visualize the distribution of a numeric variable for one or several groups, where the shape of the violin represents the density estimate of the variable
+
+```{r}
+ggplot(mko_clean, aes(x = month_name, y = Temp_bot))+
+  geom_violin()+
+  geom_boxplot(color = 'gray', alpha = 0.5, width = 0.1, outlier.color = 'black')+
+  scale_x_discrete(limits = rev(month.name))+
+  coord_flip()
+
+
+# half n half 
+ggplot(penguins, aes(x = species, y = bill_length_mm, fill = species))+
+  see::geom_violindot(size_dots = 5, alpha = 0.5)
+```
+
+###  Lecture 3.3 Tidycensus
+
+```{r message = FALSE}
+library(tidyverse)
+library(tidycensus)
+library(janitor)
+library(gghighlight)
+
+# use the source function to execute everything inthat file
+
+source(here::here('week-3','KEYS.R'))
+census_api_key(censusKEY)
+
+lyme <- read_csv(here::here('week-3','data','LD-Case-Counts-by-County-01-20.csv'))
+```
+
+### Wrangle
+
+```{r}
+# -- lyme data 
+lyme_clean <- lyme %>% 
+  clean_names() %>% 
+  rename(county = ctyname,
+         state = stname,
+         status = ststatus) %>% 
+  pivot_longer(cols = 6:25,
+               names_to = 'city_year',
+               values_to = 'reported_cases') %>% 
+  mutate(year = str_remove(city_year, pattern = 'cases'),
+         year = as.factor(year))
+
+# calculate the total cases per state 
+lyme_by_state <- lyme_clean %>% 
+  group_by(year, state) %>% 
+  summarize(total_cases = sum(reported_cases))
+
+us_state_pop <- get_estimates(geography = 'state',
+                              product = 'population',
+                              year = 2019) %>% 
+  filter(variable == 'POP') %>% 
+  select(state = NAME, 
+         population = value)
+
+lyme_pop <- left_join(lyme_by_state, us_state_pop) %>% 
+  mutate(pop100k = population/100000) %>% 
+  mutate(cases_per_100k = total_cases/pop100k)
+
 ```
