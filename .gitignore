@@ -50,3 +50,6 @@ rsconnect/
 
 # data folders 
 /week*/data
+
+# census API Key
+/week-3/KEYS.R

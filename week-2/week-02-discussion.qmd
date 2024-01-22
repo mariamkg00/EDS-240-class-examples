@@ -1,0 +1,55 @@
+### Alt text
+
+-   a textual substitue for non-text content in web pages, when you inspect elements
+
+-   multitiude of uses, written that conveys meaning or messages for visualizations
+
+-   acts as a guiding tool for visualizations
+
+-   provides more accurate image descriptions/context to search engine crawlers, which improves their assessment of a page's purpose and content
+
+-   context dependent
+
+alt='chart type of type of data where reason for including chart'
+
+ex) =' a split bars chart of different types of milk's environmental impact, where cow's milk scores significantly worst in carbon emisisons, land use, and water use than the other milk alternatives. Cow's milk produces two times more carbon emissions, uses nine times more land, and twice the water that rice milk uses. Rice milk is the second most contaminating type of milk in terms of carbon emissions'
+
+figure caption - text that is displayed on the screen (typically under the data visualization its associated with) and is used to provide additional information and context
+
+alt text- not rendered on screen, but is identified and read aloud by screen readers; used to describe the main takeaways of a data visualization
+
+### Tips
+
+-   write in sentence case, but keep it short
+
+-   carefully consider the use of special characters
+
+-   link to the data and source
+
+question , answer, caption, alt text
+
+Question: What's the relationship between climate change vulnerability index and average annual percent change in population in each continent?
+
+Answer: As average population percent change increases, climate change vulnerability index descrease.
+
+caption:
+
+alt text: scatter plot of climate change vulnerability index and global population from 2018-2035 where points on scatterplot represent a country, with size representing size of population and colored by continent
+
+-   scatter plot depicting two axes arranged color coded by continent, size represented by population, the greater the avg % change, greater your risk is in climate vulnerability, on average Africa carries the highest risk and and Europe has the lowest risk in climate vulnerability
+
+#2
+
+Q: How does predicted coral cover change over time in relation to ocean warming in a post warming period versus historical ?
+
+A: Ocean warming is predicted to decrease predicted coral cover compared to its historical trajectory. The slope of the post-warming trajectory; 95% of the points used to draw the line fall within the region (less predictable in orange)
+
+alt text: a line plot of two different trajectories of coral cover over one hundred years, two line plots ; line chart depicting relationship between time and coral cover; post warming trajectory is less predictable and slower than the historical trajectory
+
+net profitability on corn based on county , blue meaning more profitable, red meaning less profitable; cartographic map of US counties
+
+costs per acre; q: to what extent do counties in US differ based on corn profitability
+
+cartographic map depicting corn profitability by county where midwestern states are more profitable than eastern states where high profitability is represented by blue and low is red
+
+map of the world surrounded by ranked countries color coded by co2 emittors or vulnerable countries, circle size depicts magnitude; eritrea is the most vulnerable country and china is the biggest polluter

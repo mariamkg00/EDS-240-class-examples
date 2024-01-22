@@ -65,7 +65,7 @@ temp_data_long <- temp_data_wide %>%
 
 `temp_data_wide` is untidy because each station is its own column, when it should be a row
 
-### Plot #1 ; exploring the relationship between penguin bill length and bill depth 
+### Plot #1 ; exploring the relationship between penguin bill length and bill depth
 
 ```{r}
 ## str(obj) gives variable names and variable types and dimension of dataframe
@@ -103,7 +103,7 @@ ggplot(penguins, aes(x = body_mass_g,
   scale_color_gradient(low = "#132b43",high = "#f7dd4c")
 ```
 
-## Plot 2 
+## Plot 2
 
 ```{r}
 ggplot(penguins, aes(x = species))+
