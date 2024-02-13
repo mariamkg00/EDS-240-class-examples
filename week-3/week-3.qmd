@@ -254,7 +254,7 @@ ggplot(penguins, aes(x = species, y = bill_length_mm, fill = species))+
   see::geom_violindot(size_dots = 5, alpha = 0.5)
 ```
 
-###  Lecture 3.3 Tidycensus
+### Lecture 3.3 Tidycensus
 
 ```{r message = FALSE}
 library(tidyverse)
@@ -301,4 +301,72 @@ lyme_pop <- left_join(lyme_by_state, us_state_pop) %>%
   mutate(pop100k = population/100000) %>% 
   mutate(cases_per_100k = total_cases/pop100k)
 
+```
+
+## Line Plot
+
+```{r}
+# highlight 1 group -----
+lyme_pop %>% 
+  filter(year %in% c(2010:2020)) %>% 
+  ggplot(aes(x = year, y = cases_per_100k, group = state, color = state))+
+  geom_line()+
+  gghighlight::gghighlight(state == 'New Jersey')
+
+# highlight based on a conditional -------
+lyme_pop %>% 
+  filter(year %in% c(2010:2020)) %>% 
+  ggplot(aes(x = year, y = cases_per_100k, group = state, color = state))+
+  geom_line()+
+  gghighlight::gghighlight(max(cases_per_100k) > 100)
+```
+
+Do not start at the y-axis at 0 if the range of data is small but the distance from the bottom of the range to 0 is large.
+
+The larger the aspect ratio, the steeper changes appear, which may cause readers to interpret changes as more important. The smaller the aspect ratio, the flatter the line which may cause readers to interpret changes as small/insignificant
+
+Aspect ratio affects perception of slope ; with a wider aspect ratio, we can more clearly see the differences in rates of change in sunspot activity
+
+```{r}
+# aspect ratio ----
+lyme_pop %>% 
+  filter(year %in% c(2010:2020)) %>% 
+  filter(state == 'Vermont') %>% 
+  ggplot(aes(x = year, y = cases_per_100k, group = state))+
+  geom_line()+
+  scale_y_continuous(breaks = seq(0,190, by = 1))+
+  coord_fixed(ratio = 1/20)
+```
+
+### Area plots
+
+```{r}
+# area chart 1 group ----
+lyme_pop %>% 
+  filter(year %in% c(2010:2020)) %>% 
+  filter(state == "Washington") %>% 
+  ggplot(aes(x = year, y = cases_per_100k, group = state, fill = state))+
+  geom_area()+
+  scale_fill_manual(values = c("blue"))+
+  scale_x_discrete(expand = c(0,0))+
+  scale_y_continuous(expand = c(0,0))+
+  theme(legend.position = 'none')
+
+
+# stacked area chart ------
+lyme_pop %>% 
+  filter(year %in% c(2010:2020)) %>% 
+  filter(state %in% c("Maine", "Rhode Island","New Hampshire","Vermont")) %>% 
+  ggplot(aes(x = year, y = cases_per_100k, group = state, fill = state))+
+  geom_area(position = 'fill', rev =)+
+  scale_y_continuous(labels = scales::label_percent(scale = 100))
+
+
+# line chart version
+lyme_pop %>% 
+  filter(year %in% c(2010:2020)) %>% 
+  filter(state %in% c("Maine", "Rhode Island","New Hampshire","Vermont")) %>% 
+  ggplot(aes(x = year, y = cases_per_100k, group = state, fill = state))+
+  geom_line()+
+  facet_wrap(~state)
 ```
