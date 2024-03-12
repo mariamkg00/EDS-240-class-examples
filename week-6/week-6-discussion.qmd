@@ -1,0 +1,35 @@
+### Ternary Plots
+
+3 variables - simultaneous comparisons
+
+Radar plots/ Spider chart
+
+more customizable than a ternary plot
+
+multi-scale and pattern comparisons simultaneously
+
+1 unit of measurement
+
+Sunburst/ radial treemap
+
+proportional contributions of different categories within a hierarchy
+
+useful for exploratory data
+
+you can zoom in and out of sunburst plots
+
+circle thing you want to analyze further and follow up with that
+
+Heatmap
+
+using color to emphasize differences
+
+useful for diverging data types
+
+Sankey diagrams
+
+depicts the flow of values, transition of dominance, and increase/decreases
+
+Treemap plots
+
+good for simple pattern spotting, hierarchical comparisons, and proportional visualizations
